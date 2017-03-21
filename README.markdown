@@ -17,7 +17,7 @@ Usage
 $ create-ios-framework
 ```
 
-![usage gif](./images/2017-03-21 16.12.12.gif)
+![usage gif](https://raw.githubusercontent.com/epingwang/create-ios-framework/master/images/2017-03-21%2016.12.12.gif)
 
 Configuration
 ---
