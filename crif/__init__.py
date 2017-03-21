@@ -73,7 +73,6 @@ def main():
 
 	options.date = time.strftime('%Y/%m/%d',time.localtime(time.time()))
 	options.author = getpass.getuser()
-	print options.author
 
 	projectname = options.projectname
 
@@ -85,6 +84,10 @@ def main():
 
 	os.chdir(projectname+'/'+projectname+'Demo')
 	os.system('pod install')
+	os.chdir('../')
+	os.system('open '+projectname+'.xcworkspace')
+	print 'complete :)'
+
 
 if __name__ == '__main__':
   main()
