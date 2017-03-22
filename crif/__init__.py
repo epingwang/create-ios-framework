@@ -4,8 +4,10 @@ from sys import version_info
 from optparse import OptionParser
 import os
 from crif.utils import (options_from_file, deep_search_path)
+from crif._version import __version__
 import time
 import getpass
+import sys
 
 def file_handler_wrap(options):
 	def file_handler(filepath):
@@ -67,8 +69,20 @@ def main():
 		dest="organizationname",
 		help="organization name"
 		)
+	parser.add_option(
+		"-v",
+		"--version",
+		action="store_true",
+		default=False,
+		dest="version",
+		help="show version and info about the system, and exit"
+		)
 
 	(options, args) = parser.parse_args()
+
+	if options.version:
+		print __version__
+		sys.exit()
 
 	if options.filepath:
 		options_from_file(options.filepath, options)
