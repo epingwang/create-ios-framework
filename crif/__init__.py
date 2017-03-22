@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from sys import version_info
 from optparse import OptionParser
 import os
 from crif.utils import (options_from_file, deep_search_path)
@@ -29,6 +30,16 @@ def file_handler_wrap(options):
 			os.rename(filepath, new_path)
 			pass
 	return file_handler
+
+def get_input(input_msg, default=None):
+  if version_info >= (3, 0):
+    input_value = input(input_msg)
+  else:
+    input_value = raw_input(input_msg.encode('utf8')).decode('utf8')
+
+  if input_value == '':
+    return default
+  return input_value
 
 def main():
 	parser = OptionParser() 
@@ -63,22 +74,20 @@ def main():
 		options_from_file(options.filepath, options)
 
 	if options.projectname == None:
-		options.projectname = raw_input('project name:')
+		options.projectname = get_input('project name (AwesomeSDK): ', 'AwesomeSDK')
 
 	if options.prefix == None:
-		options.prefix = raw_input('bundle id prefix:')
+		options.prefix = get_input('bundle id prefix (com.awesome): ', 'com.awesome')
 
 	if options.organizationname == None:
-		options.organizationname = raw_input('organization name:')
+		options.organizationname = get_input('organization name (Awesome Kit): ', 'Awesome Kit')
 
 	options.date = time.strftime('%Y/%m/%d',time.localtime(time.time()))
 	options.author = getpass.getuser()
 
 	projectname = options.projectname
 
-	os.system("git clone https://github.com/epingwang/iOSFrameworkTemplate.git -b name-replace")
-	# rename root directory
-	os.rename("iOSFrameworkTemplate", projectname)
+	os.system("git clone https://github.com/epingwang/iOSFrameworkTemplate.git -b name-replace "+projectname)
 
 	deep_search_path(projectname, file_handler_wrap(options), ['.git', '.DS_Store', '.xcuserdatad'])
 
