@@ -8,6 +8,7 @@ from crif._version import __version__
 import time
 import getpass
 import sys
+import json
 
 def file_handler_wrap(options):
 	def file_handler(filepath):
@@ -77,6 +78,13 @@ def main():
 		dest="version",
 		help="show version and info about the system, and exit"
 		)
+	parser.add_option(
+		"--dynamic",
+		action="store_true",
+		default=False,
+		dest="dynamic",
+		help="set Mach-O type to Dynamic Library. Default is Static Library."
+		)
 
 	(options, args) = parser.parse_args()
 
@@ -96,6 +104,9 @@ def main():
 	if options.organizationname == None:
 		options.organizationname = get_input('organization name (Awesome Kit): ', 'Awesome Kit')
 
+	if options.dynamic == False:
+		options.dynamic = get_input('Is dynamic library (false): ', False)
+
 	options.date = time.strftime('%Y/%m/%d',time.localtime(time.time()))
 	options.author = getpass.getuser()
 
@@ -108,6 +119,32 @@ def main():
 	os.chdir(projectname+'/'+projectname+'Demo')
 	os.system('pod install')
 	os.chdir('../')
+
+	if options.dynamic:
+		os.chdir(projectname)
+		os.system('plutil -convert json '+projectname+'.xcodeproj/project.pbxproj -o project.json')
+		with open('project.json', 'r') as framework_project_file:
+			framework_project_obj = json.load(framework_project_file)
+			root_id = framework_project_obj["rootObject"]
+			objects = framework_project_obj["objects"]
+			target_ids = objects[root_id]['targets']
+			for target_id in target_ids:
+				target = objects[target_id]
+				build_conf_list = objects[target['buildConfigurationList']]
+				build_conf_ids = build_conf_list['buildConfigurations']
+				for build_conf_id in build_conf_ids:
+					build_conf = objects[build_conf_id]
+					mach_o_type = "staticlib"
+					if options.dynamic:
+						mach_o_type = "mh_dylib"
+					build_conf['buildSettings']['MACH_O_TYPE'] = mach_o_type
+					pass
+				pass
+		with open('project.json', 'w') as framework_project_file_write:
+			framework_project_file_write.write(json.dumps(framework_project_obj))
+		os.system('plutil -convert xml1 project.json -o '+projectname+'.xcodeproj/project.pbxproj')
+		os.chdir('../')
+
 	os.system('open '+projectname+'.xcworkspace')
 	print 'complete :)'
 
