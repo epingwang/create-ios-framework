@@ -20,7 +20,7 @@ setup(name='create-ios-framework',
       packages=['crif'],
       zip_safe=False,
       entry_points={
-      	'console_scripts': [
-      		'create-ios-framework=crif:main',
-      	],
+        'console_scripts': [
+          'create-ios-framework=crif:main',
+        ],
       })
