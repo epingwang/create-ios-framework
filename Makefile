@@ -1,2 +1,2 @@
 deploy:
-  python setup.py sdist --formats=gztar register upload
+	python setup.py sdist --formats=gztar register upload
