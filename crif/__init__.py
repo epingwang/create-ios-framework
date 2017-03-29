@@ -9,6 +9,7 @@ import time
 import getpass
 import sys
 import json
+import shutil
 
 def file_handler_wrap(options):
   def file_handler(filepath):
@@ -145,6 +146,7 @@ def main():
     os.system('plutil -convert xml1 project.json -o '+projectname+'.xcodeproj/project.pbxproj')
     os.chdir('../')
 
+  shutil.rmtree('.git')
   os.system('open '+projectname+'.xcworkspace')
   print 'complete :)'
 
