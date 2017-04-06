@@ -10,6 +10,8 @@ import getpass
 import sys
 import json
 import shutil
+from pyspin.spin import make_spin, Default
+
 
 def file_handler_wrap(options):
   def file_handler(filepath):
@@ -44,6 +46,47 @@ def get_input(input_msg, default=None):
   if input_value == '':
     return default
   return input_value
+
+@make_spin(Default, 'Cloning template project...')
+def clone_template_project(projectname):
+
+  os.system("git clone https://github.com/epingwang/iOSFrameworkTemplate.git --quiet -b name-replace "+projectname)
+
+@make_spin(Default, 'Editing template project...')
+def edit_template_project(options):
+  deep_search_path(options.projectname, file_handler_wrap(options), ['.git', '.DS_Store', '.xcuserdatad'])
+
+@make_spin(Default, 'Generating Pods project...')
+def install_pod_dependencies(projectname):
+  os.chdir(projectname+'/'+projectname+'Demo')
+  os.system('pod install --silent')
+  os.chdir('../')
+
+def edit_project_file(options, projectname):
+  if options.dynamic:
+    os.chdir(projectname)
+    os.system('plutil -convert json '+projectname+'.xcodeproj/project.pbxproj -o project.json')
+    with open('project.json', 'r') as framework_project_file:
+      framework_project_obj = json.load(framework_project_file)
+      root_id = framework_project_obj["rootObject"]
+      objects = framework_project_obj["objects"]
+      target_ids = objects[root_id]['targets']
+      for target_id in target_ids:
+        target = objects[target_id]
+        build_conf_list = objects[target['buildConfigurationList']]
+        build_conf_ids = build_conf_list['buildConfigurations']
+        for build_conf_id in build_conf_ids:
+          build_conf = objects[build_conf_id]
+          mach_o_type = "staticlib"
+          if options.dynamic:
+            mach_o_type = "mh_dylib"
+          build_conf['buildSettings']['MACH_O_TYPE'] = mach_o_type
+          pass
+        pass
+    with open('project.json', 'w') as framework_project_file_write:
+      framework_project_file_write.write(json.dumps(framework_project_obj))
+    os.system('plutil -convert xml1 project.json -o '+projectname+'.xcodeproj/project.pbxproj')
+    os.chdir('../')
 
 def main():
   parser = OptionParser() 
@@ -113,38 +156,13 @@ def main():
 
   projectname = options.projectname
 
-  os.system("git clone https://github.com/epingwang/iOSFrameworkTemplate.git -b name-replace "+projectname)
+  clone_template_project(projectname)
 
-  deep_search_path(projectname, file_handler_wrap(options), ['.git', '.DS_Store', '.xcuserdatad'])
+  edit_template_project(options)
 
-  os.chdir(projectname+'/'+projectname+'Demo')
-  os.system('pod install')
-  os.chdir('../')
+  install_pod_dependencies(projectname)
 
-  if options.dynamic:
-    os.chdir(projectname)
-    os.system('plutil -convert json '+projectname+'.xcodeproj/project.pbxproj -o project.json')
-    with open('project.json', 'r') as framework_project_file:
-      framework_project_obj = json.load(framework_project_file)
-      root_id = framework_project_obj["rootObject"]
-      objects = framework_project_obj["objects"]
-      target_ids = objects[root_id]['targets']
-      for target_id in target_ids:
-        target = objects[target_id]
-        build_conf_list = objects[target['buildConfigurationList']]
-        build_conf_ids = build_conf_list['buildConfigurations']
-        for build_conf_id in build_conf_ids:
-          build_conf = objects[build_conf_id]
-          mach_o_type = "staticlib"
-          if options.dynamic:
-            mach_o_type = "mh_dylib"
-          build_conf['buildSettings']['MACH_O_TYPE'] = mach_o_type
-          pass
-        pass
-    with open('project.json', 'w') as framework_project_file_write:
-      framework_project_file_write.write(json.dumps(framework_project_obj))
-    os.system('plutil -convert xml1 project.json -o '+projectname+'.xcodeproj/project.pbxproj')
-    os.chdir('../')
+  edit_project_file(options, projectname)
 
   shutil.rmtree('.git')
   os.system('open '+projectname+'.xcworkspace')

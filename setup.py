@@ -23,4 +23,7 @@ setup(name='create-ios-framework',
         'console_scripts': [
           'create-ios-framework=crif:main',
         ],
-      })
+      },
+      install_requires=[
+        'pyspin'
+      ])
