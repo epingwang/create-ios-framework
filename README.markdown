@@ -17,7 +17,7 @@ Usage
 $ create-ios-framework
 ```
 
-![usage gif](https://raw.githubusercontent.com/epingwang/create-ios-framework/master/images/2017-03-21%2016.12.12.gif)
+![usage gif](https://raw.githubusercontent.com/epingwang/files/master/2017-04-11%2011.10.07.gif)
 
 Configuration
 ---
@@ -41,18 +41,23 @@ Framework project structure
 ---
 
 ```
-AwesomeSDK						# root folder
-├── AwesomeSDK					# sdk development folder
-│   ├── AwesomeSDK				# source folder
+AwesomeSDK                    # root folder
+├── AwesomeSDK                # sdk development folder
+│   ├── AwesomeSDK            # source folder
 │   │   ├── AwesomeSDK.h
 │   │   ├── AwesomeClass.h
 │   │   ├── AwesomeClass.m
-│   ├── AwesomeSDK.bundle		# resource bundle
-│   ├── AwesomeSDK.xcodeproj	# project file
-├── AwesomeSDK.xcworkspace		# workspace file
-│   ├── AwesomeSDKDemo			# demo project folder
+│   ├── AwesomeSDK.bundle     # resource bundle
+│   ├── AwesomeSDK.xcodeproj  # project file
+├── AwesomeSDK.xcworkspace    # workspace file
+│   ├── AwesomeSDKDemo        # demo project folder
 ...
-│   │   ├── Podfile				# cocoapods podfile
+│   │   ├── Podfile           # cocoapods podfile
 │   │   ├── AwesomeSDK.podspec
 
 ```
+
+License
+---
+
+create-iOS-framework is available under the MIT license. See the LICENSE file for more info.
