@@ -1,7 +1,16 @@
 create-iOS-framework
 ---
 
-> create-ios-framework is a simple cli tool to create an iOS framework.
+> Create an iOS framework project with a single command.
+
+Why might you need this?
+---
+
+If you are looking to create an iOS framework project, you need to at least create two projects (a framework project and a demo project), add dependencies using some scripts in Build Phases and create a resource bundle for some pictures and localization strings. Setting this up is time-consuming.
+
+This is where this tool comes in. It creates a boilerplate with all the best practices. Happy hacking with your iOS framework.
+
+If something doesn’t work please [file an issue](https://github.com/epingwang/create-ios-framework/issues/new).
 
 Install
 ---
@@ -41,20 +50,31 @@ Framework project structure
 ---
 
 ```
-AwesomeSDK                    # root folder
-├── AwesomeSDK                # sdk development folder
-│   ├── AwesomeSDK            # source folder
-│   │   ├── AwesomeSDK.h
-│   │   ├── AwesomeClass.h
-│   │   ├── AwesomeClass.m
-│   ├── AwesomeSDK.bundle     # resource bundle
-│   ├── AwesomeSDK.xcodeproj  # project file
-├── AwesomeSDK.xcworkspace    # workspace file
-│   ├── AwesomeSDKDemo        # demo project folder
-...
-│   │   ├── Podfile           # cocoapods podfile
-│   │   ├── AwesomeSDK.podspec
-
+├── AwesomeSDK                          # sdk development folder
+│   ├── AwesomeSDK                      # source folder
+│   │   ├── AwesomeSDK.h
+│   │   ├── AwesomeSDKViewController.h
+│   │   ├── AwesomeSDKViewController.m
+│   │   └── Info.plist
+│   ├── AwesomeSDK.bundle               # resource bundle
+│   │   ├── en.lproj                    # localizations
+│   │   │   └── Localizable.strings
+│   │   ├── somepic@2x.png
+│   │   └── zh-Hans.lproj
+│   │       └── Localizable.strings
+│   └── AwesomeSDK.xcodeproj
+├── AwesomeSDK.xcworkspace
+└── AwesomeSDKDemo                      # demo project folder
+    ├── AwesomeSDK.bundle               # copied resource bundle from SDK project
+    │   ├── en.lproj
+    │   │   └── Localizable.strings
+    │   └── zh-Hans.lproj
+    │       └── Localizable.strings
+    ├── AwesomeSDK.podspec              # podspec
+    ├── AwesomeSDKDemo
+    ├── AwesomeSDKDemo.xcodeproj
+    ├── Podfile
+    └── Pods
 ```
 
 License
